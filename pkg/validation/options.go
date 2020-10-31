@@ -322,6 +322,12 @@ func parseProviderInfo(o *options.Options, msgs []string) []string {
 				p.JWTKey = signKey
 			}
 		}
+	case *providers.SISProvider:
+		if o.SISRootURL != "" {
+			var rootURL *url.URL
+			rootURL, msgs = parseURL(o.SISRootURL, "sis-root", msgs)
+			p.Configure(rootURL)
+		}
 	}
 	return msgs
 }
