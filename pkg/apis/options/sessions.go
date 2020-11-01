@@ -15,6 +15,10 @@ var CookieSessionStoreType = "cookie"
 // used for storing sessions.
 var RedisSessionStoreType = "redis"
 
+// JWTSessionStoreType is used to indicate the JWTSessionStore should be
+// used for storing sessions.
+var JWTSessionStoreType = "jwt"
+
 // CookieStoreOptions contains configuration options for the CookieSessionStore.
 type CookieStoreOptions struct {
 	Minimal bool `flag:"session-cookie-minimal" cfg:"session_cookie_minimal"`
