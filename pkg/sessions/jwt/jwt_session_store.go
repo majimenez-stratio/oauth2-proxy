@@ -12,10 +12,6 @@ import (
 )
 
 const (
-	// Cookies are limited to 4kb for all parts
-	// including the cookie name, value, attributes; IE (http.cookie).String()
-	// Most browsers' max is 4096 -- but we give ourselves some leeway
-	maxCookieLength  = 4000
 	hmacSampleSecret = "test"
 )
 

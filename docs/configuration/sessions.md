@@ -17,6 +17,7 @@ data in one of the available session storage backends.
 At present the available backends are (as passed to `--session-store-type`):
 - [cookie](#cookie-storage) (default)
 - [redis](#redis-storage)
+- [jwt](#jwt-storage)
 
 ### Cookie Storage
 
@@ -56,6 +57,15 @@ in redis via the `SETEX` command.
 
 Encrypting every session uniquely protects the refresh/access/id tokens stored in the session from
 disclosure.
+
+### JWT Storage
+
+The JWT Storage backend stores sessions as signed JWTs.
+
+All session information is stored in token claims and send back to the browser as a cookie,
+so it is transferred with each request.
+
+Only basic information is persisted, no OIDC tokens or access tokens are created as claims in order to limit the size of the token itself.
 
 #### Usage
 
