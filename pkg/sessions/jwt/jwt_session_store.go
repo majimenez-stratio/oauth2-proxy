@@ -100,7 +100,7 @@ func (s *SessionStore) tokenFromSession(ss *sessions.SessionState) (string, erro
 	claims := Claims{
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: ss.CreatedAt.Unix(),
-			ExpiresAt: ss.CreatedAt.Add(time.Hour * 6).Unix(),
+			ExpiresAt: ss.ExpiresOn.Unix(),
 		},
 		UID:    ss.User,
 		CN:     ss.PreferredUsername,
