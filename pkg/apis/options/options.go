@@ -271,6 +271,9 @@ func NewFlagSet() *pflag.FlagSet {
 	flagSet.String("user-id-claim", "email", "which claim contains the user ID")
 	flagSet.StringSlice("allowed-group", []string{}, "restrict logins to members of this group (may be given multiple times)")
 
+	flagSet.String("jwt-session-key", "", "private key in PEM format used to sign session JWT, so that you can say something like -jwt-session-key=\"${OAUTH2_PROXY_JWT_SESSION_KEY}\"")
+	flagSet.String("jwt-session-key-file", "", "path to the private key file in PEM format used to sign the session JWT so that you can say something like -jwt-session-key-file=/etc/ssl/private/jwt_session_signing_key.pem")
+
 	flagSet.AddFlagSet(cookieFlagSet())
 	flagSet.AddFlagSet(loggingFlagSet())
 	flagSet.AddFlagSet(legacyUpstreamsFlagSet())

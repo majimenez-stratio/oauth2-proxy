@@ -1,6 +1,9 @@
 package jwt
 
 import (
+	"crypto/rsa"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -8,11 +11,6 @@ import (
 	"github.com/oauth2-proxy/oauth2-proxy/v7/pkg/apis/options"
 	"github.com/oauth2-proxy/oauth2-proxy/v7/pkg/apis/sessions"
 	pkgcookies "github.com/oauth2-proxy/oauth2-proxy/v7/pkg/cookies"
-	"github.com/oauth2-proxy/oauth2-proxy/v7/pkg/logger"
-)
-
-const (
-	hmacSampleSecret = "test"
 )
 
 // Ensure CookieSessionStore implements the interface
@@ -22,14 +20,49 @@ var _ sessions.SessionStore = &SessionStore{}
 // interface that stores sessions in client side cookies
 type SessionStore struct {
 	Cookie *options.Cookie
+	JWTKey *rsa.PrivateKey
 }
 
 // NewJWTSessionStore initialises a new instance of the SessionStore from
 // the configuration given
 func NewJWTSessionStore(opts *options.SessionOptions, cookieOpts *options.Cookie) (sessions.SessionStore, error) {
+	signKey, err := parseJWTKey(opts.JWT)
+	if err != nil {
+		return nil, err
+	}
+
 	return &SessionStore{
 		Cookie: cookieOpts,
+		JWTKey: signKey,
 	}, nil
+}
+
+func parseJWTKey(o options.JWTStoreOptions) (*rsa.PrivateKey, error) {
+	switch {
+	case o.JWTKey != "" && o.JWTKeyFile != "":
+		return nil, fmt.Errorf("cannot set both jwt-session-key and jwt-session-key-file options")
+	case o.JWTKey == "" && o.JWTKeyFile == "":
+		return nil, fmt.Errorf("jwt session store requires a private key for signing JWTs")
+	case o.JWTKey != "":
+		// The JWT Key is in the commandline argument
+		signKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(o.JWTKey))
+		if err != nil {
+			return nil, err
+		}
+		return signKey, nil
+	// o.JWTKeyFile != "":
+	default:
+		// The JWT key is in the filesystem
+		keyData, err := ioutil.ReadFile(o.JWTKeyFile)
+		if err != nil {
+			return nil, err
+		}
+		signKey, err := jwt.ParseRSAPrivateKeyFromPEM(keyData)
+		if err != nil {
+			return nil, err
+		}
+		return signKey, nil
+	}
 }
 
 // Save takes a sessions.SessionState and stores the information from it
@@ -75,8 +108,8 @@ func (s *SessionStore) tokenFromSession(ss *sessions.SessionState) (string, erro
 		Tenant: ss.Tenant,
 		Groups: ss.Groups,
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(hmacSampleSecret))
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	tokenString, err := token.SignedString(s.JWTKey)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +131,6 @@ func (s *SessionStore) makeCookie(req *http.Request, name string, value string, 
 // Load reads sessions.SessionState information from Cookies within the
 // HTTP request object
 func (s *SessionStore) Load(req *http.Request) (*sessions.SessionState, error) {
-	logger.Printf("[MA] Load\n")
 	// get cookie
 	c, err := req.Cookie(s.Cookie.Name)
 	if err != nil {
@@ -106,12 +138,12 @@ func (s *SessionStore) Load(req *http.Request) (*sessions.SessionState, error) {
 	}
 
 	// validate and get session from token
-	return sessionFromToken(c.Value)
+	return s.sessionFromToken(c.Value)
 }
 
-func sessionFromToken(tokenString string) (*sessions.SessionState, error) {
+func (s *SessionStore) sessionFromToken(tokenString string) (*sessions.SessionState, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(hmacSampleSecret), nil
+		return &s.JWTKey.PublicKey, nil
 	})
 
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {

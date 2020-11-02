@@ -139,6 +139,8 @@ An example [oauth2-proxy.cfg]({{ site.gitweb }}/contrib/oauth2-proxy.cfg.example
 | `--version` | n/a | print version string | |
 | `--whitelist-domain` | string \| list | allowed domains for redirection after authentication. Prefix domain with a `.` to allow subdomains (e.g. `.example.com`)&nbsp;\[[2](#footnote2)\] | |
 | `--trusted-ip` | string \| list | list of IPs or CIDR ranges to allow to bypass authentication (may be given multiple times). When combined with `--reverse-proxy` and optionally `--real-client-ip-header` this will evaluate the trust of the IP stored in an HTTP header by a reverse proxy rather than the layer-3/4 remote address. WARNING: trusting IPs has inherent security flaws, especially when obtaining the IP address from an HTTP header (reverse-proxy mode). Use this option only if you understand the risks and how to manage them. | |
+| `--jwt-session-key` | string | private key in PEM format used to sign session JWT, so that you can say something like `--jwt-session-key="${OAUTH2_PROXY_JWT_SESSION_KEY}"` | |
+| `--jwt-session-key-file` | string | path to the private key file in PEM format used to sign the session JWT so that you can say something like `--jwt-session-key-file=/etc/ssl/private/jwt_session_signing_key.pem` | |
 
 \[<a name="footnote1">1</a>\]: Only these providers support `--cookie-refresh`: GitLab, Google and OIDC
 
