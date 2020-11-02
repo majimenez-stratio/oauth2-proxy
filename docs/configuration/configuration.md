@@ -363,3 +363,25 @@ You have to substitute *name* with the actual cookie name you configured via --c
 
 ### Note on rotated Client Secret
 If you set up your OAuth2 provider to rotate your client secret, you can use the `client-secret-file` option to reload the secret when it is updated.
+
+## Using and testing the SIS provider
+To test the SIS provider with JWT backend, a few things are needed before we launch the proxy.
+
+1. Register a new app in SIS
+
+Send a request like the one in the example below to the sis-api component:
+
+`curl -X PUT --cert /opt/mesosphere/etc/pki/node.pem --key /opt/mesosphere/etc/pki/node.key -H "Content-Type: application/json" -d '{"name": "local","serviceId": "http://127.0.0.1:4180/oauth2/callback","clientSecret": "local"}' https://sis-api.service.eos.mike.hetzner.stratio.com:9006/registry/services/local`
+
+2. Grab SIS CA file and save it to your local filesystem
+3. Generate a new JWT signing key:
+
+`openssl genrsa -out jwt-key 2048`
+
+4. Launch `oauth2-proxy` with the following flags:
+
+`oauth2-proxy --provider=sis --client-id=local --client-secret=local --email-domain="*"  --redirect-url=http://127.0.0.1:4180 --provider-ca-file=sis-ca.crt --cookie-secure=false --sis-root-url=https://bootstrap.mike.hetzner.stratio.com:9005 --session-store-type=jwt --jwt-session-key-file=jwt-key`
+
+This will launch a new proxy using the sis provider and jwt session storage.
+
+5. Point your browser to http://127.0.0.1:4180/oauth2/start?rd=/oauth2/userinfo, you should be redirected to SIS login page, and after you are successfully authenticated, you'll be redirected to the userinfo page where your username and email is shown.
