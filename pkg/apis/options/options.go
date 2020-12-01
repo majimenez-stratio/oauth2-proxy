@@ -43,6 +43,7 @@ type Options struct {
 	EmailDomains             []string `flag:"email-domain" cfg:"email_domains"`
 	WhitelistDomains         []string `flag:"whitelist-domain" cfg:"whitelist_domains"`
 	GitHubOrg                string   `flag:"github-org" cfg:"github_org"`
+	SISRootURL               string   `flag:"sis-root-url" cfg:"sis-root-url"`
 	GitHubTeam               string   `flag:"github-team" cfg:"github_team"`
 	GitHubRepo               string   `flag:"github-repo" cfg:"github_repo"`
 	GitHubToken              string   `flag:"github-token" cfg:"github_token"`
@@ -208,6 +209,7 @@ func NewFlagSet() *pflag.FlagSet {
 	flagSet.String("bitbucket-team", "", "restrict logins to members of this team")
 	flagSet.String("bitbucket-repository", "", "restrict logins to user with access to this repository")
 	flagSet.String("github-org", "", "restrict logins to members of this organisation")
+	flagSet.String("sis-root-url", "", "Stratio SIS root URL")
 	flagSet.String("github-team", "", "restrict logins to members of this team")
 	flagSet.String("github-repo", "", "restrict logins to collaborators of this repository")
 	flagSet.String("github-token", "", "the token to use when verifying repository collaborators (must have push access to the repository)")
@@ -268,6 +270,9 @@ func NewFlagSet() *pflag.FlagSet {
 
 	flagSet.String("user-id-claim", "email", "which claim contains the user ID")
 	flagSet.StringSlice("allowed-group", []string{}, "restrict logins to members of this group (may be given multiple times)")
+
+	flagSet.String("jwt-session-key", "", "private key in PEM format used to sign session JWT, so that you can say something like -jwt-session-key=\"${OAUTH2_PROXY_JWT_SESSION_KEY}\"")
+	flagSet.String("jwt-session-key-file", "", "path to the private key file in PEM format used to sign the session JWT so that you can say something like -jwt-session-key-file=/etc/ssl/private/jwt_session_signing_key.pem")
 
 	flagSet.AddFlagSet(cookieFlagSet())
 	flagSet.AddFlagSet(loggingFlagSet())
