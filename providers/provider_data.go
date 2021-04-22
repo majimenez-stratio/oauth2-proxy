@@ -29,6 +29,7 @@ type ProviderData struct {
 	ProfileURL        *url.URL
 	ProtectedResource *url.URL
 	ValidateURL       *url.URL
+	SignOutURL        *url.URL
 	// Auth request params & related, see
 	//https://openid.net/specs/openid-connect-basic-1_0.html#rfc.section.2.1.1.1
 	AcrValues        string
@@ -82,6 +83,7 @@ type providerDefaults struct {
 	redeemURL   *url.URL
 	profileURL  *url.URL
 	validateURL *url.URL
+	signOutURL  *url.URL
 	scope       string
 }
 
@@ -91,6 +93,7 @@ func (p *ProviderData) setProviderDefaults(defaults providerDefaults) {
 	p.RedeemURL = defaultURL(p.RedeemURL, defaults.redeemURL)
 	p.ProfileURL = defaultURL(p.ProfileURL, defaults.profileURL)
 	p.ValidateURL = defaultURL(p.ValidateURL, defaults.validateURL)
+	p.SignOutURL = defaultURL(p.SignOutURL, defaults.signOutURL)
 
 	if p.Scope == "" {
 		p.Scope = defaults.scope

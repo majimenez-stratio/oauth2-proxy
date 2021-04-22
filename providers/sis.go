@@ -48,6 +48,13 @@ var (
 		Host:   sisDefaultHost,
 		Path:   "/sso/oauth2.0/profile",
 	}
+
+	// Default Sign Out URL for SIS.
+	sisDefaultSignOutURL = &url.URL{
+		Scheme: "https",
+		Host:   sisDefaultHost,
+		Path:   "/sso/logout",
+	}
 )
 
 // NewSISProvider initiates a new SISProvider
@@ -57,6 +64,7 @@ func NewSISProvider(p *ProviderData) *SISProvider {
 		loginURL:   sisDefaultLoginURL,
 		redeemURL:  sisDefaultRedeemURL,
 		profileURL: sisDefaultProfileURL,
+		signOutURL: sisDefaultSignOutURL,
 		scope:      sisDefaultScope,
 	})
 
@@ -86,6 +94,14 @@ func (p *SISProvider) Configure(rootURL *url.URL) {
 			Scheme: rootURL.Scheme,
 			Host:   rootURL.Host,
 			Path:   "/sso/oauth2.0/profile",
+		}
+	}
+
+	if p.SignOutURL.String() == sisDefaultSignOutURL.String() {
+		p.SignOutURL = &url.URL{
+			Scheme: rootURL.Scheme,
+			Host:   rootURL.Host,
+			Path:   "/sso/logout",
 		}
 	}
 }
@@ -207,4 +223,16 @@ func (p *SISProvider) EnrichSession(ctx context.Context, s *sessions.SessionStat
 	}
 
 	return nil
+}
+
+// GetSignOutURL for this provider if any
+func (p *SISProvider) GetSignOutURL(redirectURI string) string {
+	// copy URL
+	redirect := *p.SignOutURL
+	if redirectURI != "" {
+		v := url.Values{}
+		v.Add("rd", redirectURI)
+		redirect.RawQuery = v.Encode()
+	}
+	return redirect.String()
 }

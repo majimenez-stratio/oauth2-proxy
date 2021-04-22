@@ -2,6 +2,8 @@
 
 ## 7.1.2 (upcoming)
 
+* Clear extra cookies on sign out
+* Redirect to provider specific URL on sign out
 * Add jwt session store
 * Add sis provider
 * Adapt repo to Stratio CICD flow

@@ -16,6 +16,7 @@ type Provider interface {
 	Authorize(ctx context.Context, s *sessions.SessionState) (bool, error)
 	ValidateSession(ctx context.Context, s *sessions.SessionState) bool
 	GetLoginURL(redirectURI, finalRedirect string) string
+	GetSignOutURL(redirectURI string) string
 	RefreshSessionIfNeeded(ctx context.Context, s *sessions.SessionState) (bool, error)
 	CreateSessionFromToken(ctx context.Context, token string) (*sessions.SessionState, error)
 }

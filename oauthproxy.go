@@ -91,6 +91,8 @@ type OAuthProxy struct {
 	realClientIPParser  ipapi.RealClientIPParser
 	trustedIPs          *ip.NetSet
 
+	ClearExtraCookieNames []string
+
 	sessionChain alice.Chain
 	headersChain alice.Chain
 	preAuthChain alice.Chain
@@ -196,18 +198,19 @@ func NewOAuthProxy(opts *options.Options, validator func(string) bool) (*OAuthPr
 		AuthOnlyPath:      fmt.Sprintf("%s/auth", opts.ProxyPrefix),
 		UserInfoPath:      fmt.Sprintf("%s/userinfo", opts.ProxyPrefix),
 
-		ProxyPrefix:         opts.ProxyPrefix,
-		provider:            opts.GetProvider(),
-		sessionStore:        sessionStore,
-		serveMux:            upstreamProxy,
-		redirectURL:         redirectURL,
-		allowedRoutes:       allowedRoutes,
-		whitelistDomains:    opts.WhitelistDomains,
-		skipAuthPreflight:   opts.SkipAuthPreflight,
-		skipJwtBearerTokens: opts.SkipJwtBearerTokens,
-		realClientIPParser:  opts.GetRealClientIPParser(),
-		SkipProviderButton:  opts.SkipProviderButton,
-		trustedIPs:          trustedIPs,
+		ProxyPrefix:           opts.ProxyPrefix,
+		provider:              opts.GetProvider(),
+		sessionStore:          sessionStore,
+		serveMux:              upstreamProxy,
+		redirectURL:           redirectURL,
+		allowedRoutes:         allowedRoutes,
+		whitelistDomains:      opts.WhitelistDomains,
+		skipAuthPreflight:     opts.SkipAuthPreflight,
+		skipJwtBearerTokens:   opts.SkipJwtBearerTokens,
+		realClientIPParser:    opts.GetRealClientIPParser(),
+		SkipProviderButton:    opts.SkipProviderButton,
+		trustedIPs:            trustedIPs,
+		ClearExtraCookieNames: opts.ClearExtraCookieNames,
 
 		basicAuthValidator: basicAuthValidator,
 		sessionChain:       sessionChain,
@@ -479,6 +482,17 @@ func (p *OAuthProxy) LoadCookiedSession(req *http.Request) (*sessionsapi.Session
 	return p.sessionStore.Load(req)
 }
 
+// ClearExtraCookies clears extra cookies if found in request
+func (p *OAuthProxy) ClearExtraCookies(rw http.ResponseWriter, req *http.Request) {
+	for _, name := range p.ClearExtraCookieNames {
+		if _, err := req.Cookie(name); err != nil {
+			logger.Printf("Cookie %s could not be retrieved from request: %v", name, err)
+			continue
+		}
+		http.SetCookie(rw, p.makeCookie(req, name, "", time.Hour*-1, time.Now()))
+	}
+}
+
 // SaveSession creates a new session cookie value and sets this on the response
 func (p *OAuthProxy) SaveSession(rw http.ResponseWriter, req *http.Request, s *sessionsapi.SessionState) error {
 	return p.sessionStore.Save(rw, req, s)
@@ -734,12 +748,14 @@ func (p *OAuthProxy) SignOut(rw http.ResponseWriter, req *http.Request) {
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
+	redirect = p.provider.GetSignOutURL(redirect)
 	err = p.ClearSessionCookie(rw, req)
 	if err != nil {
 		logger.Errorf("Error clearing session cookie: %v", err)
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
+	p.ClearExtraCookies(rw, req)
 	http.Redirect(rw, req, redirect, http.StatusFound)
 }
 

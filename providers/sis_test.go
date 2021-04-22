@@ -38,6 +38,10 @@ func TestSISProviderOverrides(t *testing.T) {
 				Scheme: "https",
 				Host:   "api.example.com",
 				Path:   "/"},
+			SignOutURL: &url.URL{
+				Scheme: "https",
+				Host:   "api.example.com",
+				Path:   "/logout"},
 			Scope: "profile"})
 	assert.NotEqual(t, nil, p)
 	assert.Equal(t, "SIS", p.Data().ProviderName)
@@ -47,6 +51,8 @@ func TestSISProviderOverrides(t *testing.T) {
 		p.Data().RedeemURL.String())
 	assert.Equal(t, "https://api.example.com/",
 		p.Data().ProfileURL.String())
+	assert.Equal(t, "https://api.example.com/logout",
+		p.Data().SignOutURL.String())
 	assert.Equal(t, "profile", p.Data().Scope)
 }
 

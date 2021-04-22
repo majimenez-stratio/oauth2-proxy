@@ -93,6 +93,11 @@ func (p *ProviderData) GetLoginURL(redirectURI, state string) string {
 	return a.String()
 }
 
+// GetSignOutURL for this provider if any
+func (p *ProviderData) GetSignOutURL(redirectURI string) string {
+	return redirectURI
+}
+
 // GetEmailAddress returns the Account email address
 // Deprecated: Migrate to EnrichSession
 func (p *ProviderData) GetEmailAddress(_ context.Context, _ *sessions.SessionState) (string, error) {
