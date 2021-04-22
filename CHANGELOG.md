@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.1.2 (upcoming)
+## 7.1.2 (April 22, 2021)
 
 * Clear extra cookies on sign out
 * Redirect to provider specific URL on sign out
