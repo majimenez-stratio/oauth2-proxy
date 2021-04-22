@@ -25,6 +25,9 @@ import (
 // are of the correct format
 func Validate(o *options.Options) error {
 	msgs := validateCookie(o.Cookie)
+	if o.Session.Type != "jwt" {
+		msgs = append(msgs, validateCookieSecret(o.Cookie.Secret)...)
+	}
 	msgs = append(msgs, validateSessionCookieMinimal(o)...)
 	msgs = append(msgs, validateRedisSessionStore(o)...)
 	msgs = append(msgs, prefixValues("injectRequestHeaders: ", validateHeaders(o.InjectRequestHeaders)...)...)
@@ -344,6 +347,12 @@ func parseProviderInfo(o *options.Options, msgs []string) []string {
 			} else {
 				p.JWTKey = signKey
 			}
+		}
+	case *providers.SISProvider:
+		if o.SISRootURL != "" {
+			var rootURL *url.URL
+			rootURL, msgs = parseURL(o.SISRootURL, "sis-root-url", msgs)
+			p.Configure(rootURL)
 		}
 	}
 	return msgs

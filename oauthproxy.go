@@ -708,11 +708,13 @@ func (p *OAuthProxy) UserInfo(rw http.ResponseWriter, req *http.Request) {
 		Email             string   `json:"email"`
 		Groups            []string `json:"groups,omitempty"`
 		PreferredUsername string   `json:"preferredUsername,omitempty"`
+		Tenant            string   `json:"tenant,omitempty"`
 	}{
 		User:              session.User,
 		Email:             session.Email,
 		Groups:            session.Groups,
 		PreferredUsername: session.PreferredUsername,
+		Tenant:            session.Tenant,
 	}
 
 	rw.Header().Set("Content-Type", "application/json")

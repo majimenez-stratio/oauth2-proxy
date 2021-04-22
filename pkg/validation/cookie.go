@@ -10,7 +10,7 @@ import (
 )
 
 func validateCookie(o options.Cookie) []string {
-	msgs := validateCookieSecret(o.Secret)
+	var msgs []string
 
 	if o.Refresh >= o.Expire {
 		msgs = append(msgs, fmt.Sprintf(

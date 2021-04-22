@@ -2,6 +2,8 @@
 
 ## 7.1.2 (upcoming)
 
+* Add jwt session store
+* Add sis provider
 * Adapt repo to Stratio CICD flow
 * Use https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.1.2 as base
 
