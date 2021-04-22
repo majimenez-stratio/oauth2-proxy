@@ -1,4 +1,4 @@
-FROM golang:1.16-buster AS builder
+FROM golang:1.16 AS builder
 
 # Copy sources
 WORKDIR $GOPATH/src/github.com/oauth2-proxy/oauth2-proxy
