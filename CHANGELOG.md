@@ -2,6 +2,8 @@
 
 ## 7.1.2 (April 22, 2021)
 
+* [EOS-5112] Clear extra cookies whenever session cookie is removed
+* [EOS-5112] Use extra cookies info from request
 * Clear extra cookies on sign out
 * Redirect to provider specific URL on sign out
 * Add jwt session store

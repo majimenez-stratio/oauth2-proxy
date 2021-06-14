@@ -460,6 +460,18 @@ func (p *OAuthProxy) makeCookie(req *http.Request, name string, value string, ex
 	}
 }
 
+func (p *OAuthProxy) makeExtraCookie(req *http.Request, name string, value string, expiration time.Duration, now time.Time) *http.Cookie {
+	return &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Path:     p.CookiePath,
+		HttpOnly: p.CookieHTTPOnly,
+		Secure:   p.CookieSecure,
+		Expires:  now.Add(expiration),
+		SameSite: cookies.ParseSameSite(p.CookieSameSite),
+	}
+}
+
 // ClearCSRFCookie creates a cookie to unset the CSRF cookie stored in the user's
 // session
 func (p *OAuthProxy) ClearCSRFCookie(rw http.ResponseWriter, req *http.Request) {
@@ -485,11 +497,13 @@ func (p *OAuthProxy) LoadCookiedSession(req *http.Request) (*sessionsapi.Session
 // ClearExtraCookies clears extra cookies if found in request
 func (p *OAuthProxy) ClearExtraCookies(rw http.ResponseWriter, req *http.Request) {
 	for _, name := range p.ClearExtraCookieNames {
-		if _, err := req.Cookie(name); err != nil {
+		c, err := req.Cookie(name)
+		if err != nil {
 			logger.Printf("Cookie %s could not be retrieved from request: %v", name, err)
 			continue
 		}
-		http.SetCookie(rw, p.makeCookie(req, name, "", time.Hour*-1, time.Now()))
+		logger.Printf("Extra cookie %s found in request: %#v", name, c)
+		http.SetCookie(rw, p.makeExtraCookie(req, c.Name, "", time.Hour*-1, time.Now()))
 	}
 }
 
@@ -645,6 +659,7 @@ func (p *OAuthProxy) SignInPage(rw http.ResponseWriter, req *http.Request, code 
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
+	p.ClearExtraCookies(rw, req)
 	rw.WriteHeader(code)
 
 	redirectURL, err := p.getAppRedirect(req)
@@ -1172,6 +1187,7 @@ func (p *OAuthProxy) getAuthenticatedSession(rw http.ResponseWriter, req *http.R
 		if err != nil {
 			logger.Errorf("Error clearing session cookie: %v", err)
 		}
+		p.ClearExtraCookies(rw, req)
 		return nil, ErrAccessDenied
 	}
 
