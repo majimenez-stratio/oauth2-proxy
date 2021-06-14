@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.1.2 (April 22, 2021)
+## 7.1.2 (June 15, 2021)
 
 * [EOS-5112] Clear extra cookies whenever session cookie is removed
 * [EOS-5112] Use extra cookies info from request
