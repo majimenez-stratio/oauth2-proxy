@@ -235,6 +235,7 @@ func parseProviderInfo(o *options.Options, msgs []string) []string {
 	p.RedeemURL, msgs = parseURL(o.RedeemURL, "redeem", msgs)
 	p.ProfileURL, msgs = parseURL(o.ProfileURL, "profile", msgs)
 	p.ValidateURL, msgs = parseURL(o.ValidateURL, "validate", msgs)
+	p.SignOutURL, msgs = parseURL(o.SignOutURL, "sign-out", msgs)
 	p.ProtectedResource, msgs = parseURL(o.ProtectedResource, "resource", msgs)
 
 	// Make the OIDC options available to all providers that support it

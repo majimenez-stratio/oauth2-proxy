@@ -374,7 +374,7 @@ Send a request like the one in the example below to the sis-api component:
 
 4. Launch `oauth2-proxy` with the following flags:
 
-`oauth2-proxy --provider=sis --client-id=local --client-secret=local --email-domain="*"  --redirect-url=http://127.0.0.1:4180 --provider-ca-file=sis-ca.crt --cookie-secure=false --sis-root-url=https://bootstrap.mike.hetzner.stratio.com:9005 --session-store-type=jwt --jwt-session-key-file=jwt-key`
+`oauth2-proxy --provider=sis --client-id=local --client-secret=local --email-domain="*"  --redirect-url=http://127.0.0.1:4180 --provider-ca-file=sis-ca.crt --cookie-secure=false --sis-root-url=https://bootstrap.mike.hetzner.stratio.com:9005/sso --session-store-type=jwt --jwt-session-key-file=jwt-key`
 
 This will launch a new proxy using the sis provider and jwt session storage.
 

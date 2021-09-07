@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/oauth2-proxy/oauth2-proxy/v7/pkg/apis/sessions"
@@ -73,11 +74,13 @@ func NewSISProvider(p *ProviderData) *SISProvider {
 
 // Configure defaults the SISProvider configuration options
 func (p *SISProvider) Configure(rootURL *url.URL) {
+	fmt.Println(rootURL.String())
+	basePath := strings.TrimSuffix(rootURL.Path, "/")
 	if p.LoginURL.String() == sisDefaultLoginURL.String() {
 		p.LoginURL = &url.URL{
 			Scheme: rootURL.Scheme,
 			Host:   rootURL.Host,
-			Path:   "/sso/oauth2.0/authorize",
+			Path:   basePath + "/oauth2.0/authorize",
 		}
 	}
 
@@ -85,7 +88,7 @@ func (p *SISProvider) Configure(rootURL *url.URL) {
 		p.RedeemURL = &url.URL{
 			Scheme: rootURL.Scheme,
 			Host:   rootURL.Host,
-			Path:   "/sso/oauth2.0/accessToken",
+			Path:   basePath + "/oauth2.0/accessToken",
 		}
 	}
 
@@ -93,7 +96,7 @@ func (p *SISProvider) Configure(rootURL *url.URL) {
 		p.ProfileURL = &url.URL{
 			Scheme: rootURL.Scheme,
 			Host:   rootURL.Host,
-			Path:   "/sso/oauth2.0/profile",
+			Path:   basePath + "/oauth2.0/profile",
 		}
 	}
 
@@ -101,7 +104,7 @@ func (p *SISProvider) Configure(rootURL *url.URL) {
 		p.SignOutURL = &url.URL{
 			Scheme: rootURL.Scheme,
 			Host:   rootURL.Host,
-			Path:   "/sso/logout",
+			Path:   basePath + "/logout",
 		}
 	}
 }
@@ -127,6 +130,7 @@ func (p *SISProvider) Redeem(ctx context.Context, redirectURL, code string) (s *
 		params.Add("resource", p.ProtectedResource.String())
 	}
 
+	fmt.Println(p.RedeemURL.String())
 	result := requests.New(p.RedeemURL.String()).
 		WithContext(ctx).
 		WithMethod("POST").

@@ -94,6 +94,7 @@ type Options struct {
 	ProtectedResource                  string   `flag:"resource" cfg:"resource"`
 	ValidateURL                        string   `flag:"validate-url" cfg:"validate_url"`
 	Scope                              string   `flag:"scope" cfg:"scope"`
+	SignOutURL                         string   `flag:"sign-out-url" cfg:"sign_out_url"`
 	Prompt                             string   `flag:"prompt" cfg:"prompt"`
 	ApprovalPrompt                     string   `flag:"approval-prompt" cfg:"approval_prompt"` // Deprecated by OIDC 1.0
 	UserIDClaim                        string   `flag:"user-id-claim" cfg:"user_id_claim"`
@@ -232,6 +233,7 @@ func NewFlagSet() *pflag.FlagSet {
 	flagSet.String("resource", "", "The resource that is protected (Azure AD only)")
 	flagSet.String("validate-url", "", "Access token validation endpoint")
 	flagSet.String("scope", "", "OAuth scope specification")
+	flagSet.String("sign-out-url", "", "Sign out endpoint")
 	flagSet.String("prompt", "", "OIDC prompt")
 	flagSet.String("approval-prompt", "force", "OAuth approval_prompt")
 

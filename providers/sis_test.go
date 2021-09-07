@@ -62,7 +62,7 @@ func TestSISProviderRedeem(t *testing.T) {
 	})
 	defer b.Close()
 
-	bURL, _ := url.Parse(b.URL)
+	bURL, _ := url.Parse(b.URL + "/sso")
 	p := testSISProvider(bURL)
 	s, err := p.Redeem(context.Background(), "imaginary_redirect_url", "imaginary_code")
 	assert.NoError(t, err)
@@ -78,7 +78,7 @@ func TestSISProviderEnrichSession(t *testing.T) {
 	})
 	defer b.Close()
 
-	bURL, _ := url.Parse(b.URL)
+	bURL, _ := url.Parse(b.URL + "/sso")
 	p := testSISProvider(bURL)
 	s := CreateAuthorizedSession()
 	err := p.EnrichSession(context.Background(), s)
