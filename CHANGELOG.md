@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.1.2 (June 15, 2021)
+## 7.1.2 (September 10, 2021)
 
 * Bump alpine version to fix vulnerabilities
 * [EOS-5416] Make sis path configurable
