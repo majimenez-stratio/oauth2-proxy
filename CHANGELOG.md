@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.1.3 (upcoming)
+
+* Adapt repo to new CICD
+
 ## 7.1.2 (September 10, 2021)
 
 * Bump alpine version to fix vulnerabilities
