@@ -8,7 +8,7 @@ hose {
     ANCHORE_POLICY = "production"
 
     DEV = { config ->
-        doUT(conf: config, parameters: "HOME=/go")
+        doUT(conf: config, parameters: "GOCACHE=/tmp")
         doDocker(conf: config, image: 'oauth2-proxy')
     }
 }
