@@ -1,7 +1,8 @@
 # Changelog
 
-## 7.1.3 (upcoming)
+## 7.1.2-0.1.0 (upcoming)
 
+* Use new versioning schema
 * Adapt repo to new CICD
 
 ## 7.1.2 (September 10, 2021)
