@@ -1,11 +1,15 @@
 # Changelog
 
-## 7.1.2-0.1.0 (upcoming)
+## 7.1.2-0.1.0 (2022-07-21)
+
 
 * Use new versioning schema
 * Adapt repo to new CICD
 
-## 7.1.2 (September 10, 2021)
+
+## Previous development
+
+### Branched to branch-7.1 (2021-09-10)
 
 * Bump alpine version to fix vulnerabilities
 * [EOS-5416] Make sis path configurable
@@ -18,7 +22,7 @@
 * Adapt repo to Stratio CICD flow
 * Use https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.1.2 as base
 
-## 6.1.1 (Built: December 9, 2020 | Pre-release)
+### Branched to branch-6.1 (2020-12-09)
 
 * Add tenant and groups to userinfo
 * Add SIS provider and JWT session support
