@@ -1,11 +1,13 @@
 # Changelog
 
-## 7.1.2-0.1.0 (2022-07-21)
+## 7.1.2-0.1.1 (upcoming)
 
+* [EOS-10808] Clear extra cookies with same domain as session cookie
+
+## 7.1.2-0.1.0 (2022-07-21)
 
 * Use new versioning schema
 * Adapt repo to new CICD
-
 
 ## Previous development
 
