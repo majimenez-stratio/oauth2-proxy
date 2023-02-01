@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.1.2-0.1.1 (upcoming)
+## 7.1.2-0.1.1 (2023-02-01)
 
 * [EOS-10808] Clear extra cookies with same domain as session cookie
 
