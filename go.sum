@@ -155,8 +155,6 @@ github.com/oauth2-proxy/mockoidc v0.0.0-20240214162133-caebfff84d25 h1:9bCMuD3Tc
 github.com/oauth2-proxy/mockoidc v0.0.0-20240214162133-caebfff84d25/go.mod h1:eDjgYHYDJbPLBLsyZ6qRaugP0mX8vePOhZ5id1fdzJw=
 github.com/oauth2-proxy/tools/reference-gen v0.0.0-20220223111546-d3b50d1a591a h1:2RkJiJXdto2/qHaM7mTUKSR8yxImz0zei8LW0bcbav0=
 github.com/oauth2-proxy/tools/reference-gen v0.0.0-20220223111546-d3b50d1a591a/go.mod h1:J9TATNVXZX2MAsXx9J35weO47Fp3FQtx+f48AHLFAug=
-github.com/ohler55/ojg v1.24.1 h1:PaVLelrNgT5/0ppPaUtey54tOVp245z33fkhL2jljjY=
-github.com/ohler55/ojg v1.24.1/go.mod h1:gQhDVpQLqrmnd2eqGAvJtn+NfKoYJbe/A4Sj3/Vro4o=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.12.1/go.mod h1:zj2OWP4+oCPe1qIXoGWkgMRwljMUYCdkwsT2108oapk=
 github.com/onsi/ginkgo v1.16.5 h1:8xi0RTUf59SOSfEtZMvwTvXYMzG4gV23XVHOZiXNtnE=

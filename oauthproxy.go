@@ -536,6 +536,22 @@ func (p *OAuthProxy) LoadCookiedSession(req *http.Request) (*sessionsapi.Session
 	return p.sessionStore.Load(req)
 }
 
+// ClearExtraCookies clears extra cookies if found in request
+func (p *OAuthProxy) ClearExtraCookies(rw http.ResponseWriter, req *http.Request) {
+	if provider, ok := p.provider.(*providers.SISProvider); ok {
+		fmt.Printf(provider.ClientID)
+		for _, name := range provider.ClearExtraCookieNames {
+			c, err := req.Cookie(name)
+			if err != nil {
+				logger.Printf("Cookie %s could not be retrieved from request: %v", name, err)
+				continue
+			}
+			logger.Printf("Extra cookie %s found in request: %#v", name, c)
+			http.SetCookie(rw, cookies.MakeCookieFromOptions(req, c.Name, "", p.CookieOptions, time.Hour*-1, time.Now()))
+		}
+	}
+}
+
 // SaveSession creates a new session cookie value and sets this on the response
 func (p *OAuthProxy) SaveSession(rw http.ResponseWriter, req *http.Request, s *sessionsapi.SessionState) error {
 	return p.sessionStore.Save(rw, req, s)
@@ -633,6 +649,7 @@ func (p *OAuthProxy) SignInPage(rw http.ResponseWriter, req *http.Request, code 
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
+	p.ClearExtraCookies(rw, req)
 	rw.WriteHeader(code)
 
 	redirectURL, err := p.appDirector.GetRedirect(req)
@@ -720,11 +737,17 @@ func (p *OAuthProxy) UserInfo(rw http.ResponseWriter, req *http.Request) {
 		Email             string   `json:"email"`
 		Groups            []string `json:"groups,omitempty"`
 		PreferredUsername string   `json:"preferredUsername,omitempty"`
+		Tenant            string   `json:"tenant,omitempty"`
+		Username          string   `json:"username,omitempty"`
+		Tenants           []string `json:"tenants,omitempty"`
 	}{
 		User:              session.User,
 		Email:             session.Email,
 		Groups:            session.Groups,
 		PreferredUsername: session.PreferredUsername,
+		Tenant:            session.Tenant,
+		Username:          session.Username,
+		Tenants:           session.Tenants,
 	}
 
 	if err := json.NewEncoder(rw).Encode(userInfo); err != nil {
@@ -741,15 +764,15 @@ func (p *OAuthProxy) SignOut(rw http.ResponseWriter, req *http.Request) {
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
+	redirect = p.provider.GetSignOutURL(redirect)
 	err = p.ClearSessionCookie(rw, req)
 	if err != nil {
 		logger.Errorf("Error clearing session cookie: %v", err)
 		p.ErrorPage(rw, req, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	p.ClearExtraCookies(rw, req)
 	p.backendLogout(rw, req)
-
 	http.Redirect(rw, req, redirect, http.StatusFound)
 }
 
@@ -1129,6 +1152,7 @@ func (p *OAuthProxy) getAuthenticatedSession(rw http.ResponseWriter, req *http.R
 		if err != nil {
 			logger.Errorf("Error clearing session cookie: %v", err)
 		}
+		p.ClearExtraCookies(rw, req)
 		return nil, ErrAccessDenied
 	}
 
