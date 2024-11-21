@@ -1,11 +1,11 @@
 # This ARG has to be at the top, otherwise the docker daemon does not known what to do with FROM ${RUNTIME_IMAGE}
-ARG RUNTIME_IMAGE=gcr.io/distroless/static:nonroot
+ARG RUNTIME_IMAGE=distroless/static:nonroot
 
 # All builds should be done using the platform native to the build node to allow
 #  cache sharing of the go mod download step.
 # Go cross compilation is also faster than emulation the go compilation across
 #  multiple platforms.
-FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.22-bookworm AS builder
+FROM golang:1.22-bookworm AS builder
 
 # Copy sources
 WORKDIR $GOPATH/src/github.com/oauth2-proxy/oauth2-proxy
@@ -21,7 +21,7 @@ COPY . .
 #  sources have changed.
 ARG VERSION
 ARG TARGETPLATFORM
-ARG BUILDPLATFORM
+ARG BUILDPLATFORM="linux/amd64"
 
 # Build binary and make sure there is at least an empty key file.
 #  This is useful for GCP App Engine custom runtime builds, because
