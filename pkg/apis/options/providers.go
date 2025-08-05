@@ -93,6 +93,8 @@ type Provider struct {
 	OIDCConfig OIDCOptions `yaml:"oidcConfig,omitempty"`
 	// LoginGovConfig holds all configurations for LoginGov provider.
 	LoginGovConfig LoginGovOptions `yaml:"loginGovConfig,omitempty"`
+	// SISConfig holds all configurations for SIS provider.
+	SISConfig SISOptions `yaml:"sisConfig,omitempty"`
 
 	// ID should be a unique identifier for the provider.
 	// This value is required for all providers.
@@ -198,6 +200,9 @@ const (
 
 	// SourceHutProvider is the provider type for SourceHut
 	SourceHutProvider ProviderType = "sourcehut"
+
+	// SISProvider is the provider type for SIS
+	SISProvider ProviderType = "sis"
 )
 
 type KeycloakOptions struct {
@@ -335,6 +340,13 @@ type LoginGovOptions struct {
 	JWTKeyFile string `yaml:"jwtKeyFile,omitempty"`
 	// PubJWKURL is the JWK pubkey access endpoint
 	PubJWKURL string `yaml:"pubjwkURL,omitempty"`
+}
+
+type SISOptions struct {
+	// SISRootURL is the OpenID Connect SISRoot URL
+	SISRootURL string `flag:"sis-root-url" cfg:"sign_out_url"`
+	// ClearExtraCookieNames sets cookie names to clear after sign out
+	ClearExtraCookieNames []string `flag:"clear-extra-cookie-names" cfg:"clear_extra_cookie_names"`
 }
 
 // Legacy default providers configuration
