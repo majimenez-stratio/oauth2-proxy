@@ -124,13 +124,16 @@ func (s *SessionStore) tokenFromSession(ss *sessions.SessionState) (string, erro
 }
 
 func (s *SessionStore) makeCookie(req *http.Request, name string, value string, expiration time.Duration) *http.Cookie {
-	return pkgcookies.MakeCookieFromOptions(
-		req,
-		name,
-		value,
-		s.Cookie,
-		expiration,
-	)
+	return pkgcookies.MakeCookieFromOptions(req, &pkgcookies.CookieOptions{
+		Name:       name,
+		Value:      value,
+		Domains:    s.Cookie.Domains,
+		Expiration: expiration,
+		SameSite:   s.Cookie.SameSite,
+		Path:       s.Cookie.Path,
+		HTTPOnly:   s.Cookie.HTTPOnly,
+		Secure:     s.Cookie.Secure,
+	})
 }
 
 // Load reads sessions.SessionState information from Cookies within the
